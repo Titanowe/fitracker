@@ -1,97 +1,112 @@
 import { StatusBar } from 'expo-status-bar';
 import { useState } from 'react';
-import { StyleSheet, Text, View, FlatList, SafeAreaView, TextInput, TouchableOpacity, TouchableHighlight } from 'react-native';
+import { StyleSheet, Text, View, FlatList, SafeAreaView, TextInput, TouchableOpacity, TouchableHighlight, Image } from 'react-native';
 import { Picker } from "@react-native-picker/picker";
-import { WorkOutDetails } from './type/task.Object';
-
+import { MenuDetails } from './type/task.Object';
+import { Alert } from 'react-native';
 
 export default function App() {
 
-  const [workouts, setWorkOuts] = useState<WorkOutDetails[]>([
-    { WorkOut_Name: "Russian twists", duration: 2, exercise_Type: "Cardio", calories: 75 },
-    { WorkOut_Name: "Jumping Jacks", duration: 50, exercise_Type: "Cardio", calories: 50 },
-    { WorkOut_Name: "Push-ups", duration: 10, exercise_Type: "Strength", calories: 100 },
+  const [Menu, setMenu] = useState<MenuDetails[]>([
+    { Food_Name: "Margherita Pizza", description: "A classic pizza topped with fresh mozzarella, ripe tomatoes, and basil on a homemade tomato sauce. Drizzled with extra virgin olive oil for a touch of richness.", course_family: "Dinner", price: 120 },
+    { Food_Name: "Chocolate Lava Cake", description: "Rich chocolate cake with a molten center, served warm with vanilla ice cream and a dusting of powdered sugar. A chocolate lover's dream", course_family: "Desert", price: 75 },
+    { Food_Name: "Chia Seed Pudding", description: "Chia seeds soaked overnight in almond milk, topped with fresh fruit and a drizzle of honey. A nutritious and energizing start to your day", course_family: "Breakfast", price: 80 },
   ]);
 
-  const [WorkOutName, setWorkOutName] = useState<string>('');
-  const [duration, setDuration] = useState<string>('');
-  const [exerciseType, setType] = useState<string>('');
-  const [calories, setcalories] = useState<string>('');
-  const [totalcalories, settotalcalories] = useState<number>(0);
+  const [FoodName, setFoodName] = useState<string>('');
+  const [iteam_Description, setDescription] = useState<string>('');
+  const [course_iteam_family, setType] = useState<string>('');
+  const [Iteam_price, setIteam_price] = useState<string>('');
+  const [Total_Meals, settotal] = useState<number>(0);
 
-  const ExerciseType = ['Cardio', 'Strength', 'Flexibility', 'Balance', 'HIIT'];
+  const iteam_family = ['Breakfast', 'lunch', 'Dinner','Desert'];
+
   const handleSubmit = () => {
-    if (WorkOutName && duration && exerciseType && calories) {
-      const newWorkout: WorkOutDetails = {
-        WorkOut_Name: WorkOutName,
-        duration: parseInt(duration),
-        exercise_Type: exerciseType,
-        calories: parseInt(calories)
+    if (FoodName && iteam_Description && course_iteam_family && Iteam_price &&  parseInt(Iteam_price) > 0) {
+      const added_Menu: MenuDetails = {
+        Food_Name: FoodName,
+        description: iteam_Description,
+        course_family: course_iteam_family,
+        price: parseInt(Iteam_price)
       };
-      setWorkOuts([...workouts, newWorkout]);
-      settotalcalories(totalcalories + newWorkout.calories);
-      setWorkOutName('');
-      setDuration('');
+       
+     
+      setMenu([...Menu, added_Menu]);
+      settotal(Total_Meals + added_Menu.price);
+      setFoodName('');
+      setDescription('');
       setType('None');
-      setcalories('');
+      setIteam_price('');
     }
+      else if (parseInt(Iteam_price) <= 50) {
+        Alert.alert("Incorrect input", "Calories need to be greater than 50", [
+          { text: "OK" },
+        ]);
+      } else {
+        Alert.alert("Incomplete form", "Please fill in all fields", [
+          { text: "OK" },
+        ]);
+      }
+  
+    
+
   }
-  const totalworkouts = workouts.length
+  const total_Meals = Menu.length
   return (
 
+    
     <SafeAreaView style={styles.itemContainer}>
       <View style={styles.headingContainer}>
-        <Text style={styles.heading}> Fitness tracker</Text>
-      </View>
+        <Text style={styles.heading}>Menu</Text>
+      </View> 
+      
       <View style={styles.summaryContainer}>
-        <Text style={styles.summaryHeading}> Today's summary:</Text>
-        <View style={styles.summaryContent}>
-          <View>
-            <Text style={styles.summaryText}>Total workouts:{totalworkouts}</Text>
-            <Text style={styles.summaryText}>Total calories burned: {totalcalories} </Text>
-          </View>
-        </View>
+        
+        <Text style={styles.summaryHeading}> Today's Menu:</Text>
+            <Text style={styles.summaryText}>Total Courses Available:{total_Meals}</Text>
+            <Text style={styles.summaryText}>Total price: {Total_Meals} </Text>
       </View>
-      <FlatList
-        style={styles.lifeStyle}
-        data={workouts}
-        keyExtractor={(item, index) => index.toString()}
-        renderItem={({ item }) => (
-          <View style={styles.container}>
-            <Text style={styles.WorkName}>Workout Name: {item.WorkOut_Name}</Text>
-            <Text style={styles.OtherDetails}>Duration: {item.duration} min </Text>
-            <Text style={styles.OtherDetails}> Workout type: {item.exercise_Type} </Text>
-            <Text style={styles.OtherDetails}>Calories burnt: {item.calories} </Text>
-          </View>
+      <FlatList 
+      style={styles.list}
+      data={Menu}
+      keyExtractor={(item, index) => index.toString()}
+      renderItem={({item}) => (
+        <View style ={styles.container}>
+          <Text style={styles.mealName}>Iteam: {item.Food_Name}</Text>
+          <Text style={styles.OtherDetails}>Description: {item.description} min </Text>
+          <Text style={styles.OtherDetails}>Course Family: {item.course_family} </Text>
+          <Text style={styles.OtherDetails}>Price: {item.price} </Text>
+        </View>
+
         )}
       ></FlatList>
       <View style={styles.userInputView} >
         <TextInput style={styles.input}
-          placeholder='Work out name'
-          value={WorkOutName}
-          onChangeText={setWorkOutName}>
+          placeholder='Meal Name'
+          value={FoodName}
+          onChangeText={setFoodName}>
         </TextInput>
 
         <TextInput style={styles.input}
-          placeholder='Duratin (min)'
-          value={duration}
-          onChangeText={setDuration}>
+          placeholder='About'
+          value={iteam_Description}
+          onChangeText={setDescription}>
         </TextInput>
 
         <Picker
-          selectedValue={exerciseType}
+          selectedValue={course_iteam_family}
           onValueChange={(itemValeu) => setType(itemValeu)}
           style={styles.input}>
-          {ExerciseType.map((exerciseType) => (
+          {iteam_family.map((exerciseType) => (
             <Picker.Item label={exerciseType} value={exerciseType} key={exerciseType} />
           ))}
         </Picker>
 
         <TextInput
           style={styles.input}
-          placeholder='Calories burnt'
-          value={calories}
-          onChangeText={setcalories}>
+          placeholder='Value price'
+          value={Iteam_price}
+          onChangeText={setIteam_price}>
         </TextInput>
 
 
@@ -117,17 +132,18 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginVertical: 5,
     padding: 20,
+    width:"100%"
   },
-  lifeStyle: {
-    maxHeight: 800,
+  list: {
+    maxHeight: 8000,
   },
   itemContainer: {
     flex: 2,
     padding: 25,
     marginVertical: 7,
-    backgroundColor: 'grey',
+    backgroundColor: 'white',
   },
-  WorkName: {
+  mealName: {
     fontSize: 30,
     fontWeight: "bold",
   },
@@ -161,7 +177,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     marginVertical: -15,
     borderRadius: 5,
-    color: 'black',
+    color: 'grey',
     marginTop: 30,
     fontSize: 20,
   },
@@ -182,31 +198,32 @@ const styles = StyleSheet.create({
     fontWeight: 'bold'
   },
   summaryContainer: {
-    flex: 5,
-    padding: 30,
-    marginVertical: 9,
-    backgroundColor: 'grey',
+    flex: 1,
+    padding: 80,
+    marginVertical: "auto",
+    backgroundColor: 'orange',
     alignItems:"stretch"
   },
   summaryHeading: {
-    fontSize: 30,
+    fontSize: 20,
     fontWeight: "bold",
     color: "black",
   },
-  summaryContent: {
- color:"white",
- width:'100%'
-  },
   summaryText: {
-    width: '100%',
-    height: 40,
-    backgroundColor: 'white',
-    marginBottom: 10,
-    paddingHorizontal: 10,
-    borderRadius: 10,
-    color: 'blacl',
-    marginTop: 1,
-    fontSize: 20,
-  },
+   width:"auto",
+    height: 20,
+    marginBottom: 8,
+    paddingHorizontal: 2,
+    color: 'black',
+    fontSize: 20,
+  },
 
+  Image:{
+    marginTop:-50,
+    marginBottom:250,    
+  },
+  Move:{
+    flexDirection:'row',
+    justifyContent:'space-between'
+  }
 });

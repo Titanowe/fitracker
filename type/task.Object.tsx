@@ -1,7 +1,7 @@
 import React from "react";
-export type WorkOutDetails ={
-    WorkOut_Name:string;
-    duration: number;
-    exercise_Type:string;
-    calories: number;
+export type MenuDetails ={
+    Food_Name:string;
+    description:string;
+    course_family:string;
+    price: number;
 }
